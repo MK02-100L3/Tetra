@@ -104,3 +104,9 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+# Modular Arenas Blender source archive
+/Assets/LoafbrrAssets/ModularArena/ModularArenas_blend.zip
+/Assets/LoafbrrAssets/ModularArena/ModularArenas_blend.zip.meta
+# Modular Arenas Blender source archive
+/Assets/LoafbrrAssets/ModularArena/ModularArenas_blend.zip
+/Assets/LoafbrrAssets/ModularArena/ModularArenas_blend.zip.meta
