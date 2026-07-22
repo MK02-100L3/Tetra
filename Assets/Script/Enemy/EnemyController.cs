@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
+    private Rigidbody rb;
     // 飛んでいるかどうか
     private bool isFlying = false;
     public bool IsFlying => isFlying;
@@ -20,18 +21,28 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private float lifeTime = 2.0f;
 
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+
+        // 重力を使わない
+        rb.useGravity = false;
+
+        // 物理演算では動かさない
+        rb.isKinematic = true;
+    }
+
     void Update()
     {
         if (!isFlying)
             return;
 
-        // 一直線に移動
+        // 一直線に飛ぶ
         transform.position += flyDirection * flySpeed * Time.deltaTime;
 
-        // タイマーを減らす
+        // タイマー
         lifeTimer -= Time.deltaTime;
 
-        // 一定時間経ったら消える
         if (lifeTimer <= 0)
         {
             Destroy(gameObject);
@@ -41,32 +52,33 @@ public class EnemyController : MonoBehaviour
     // プレイヤーから吹っ飛ばされる
     public void KnockBack(Vector3 attackPosition)
     {
-        // 攻撃地点から敵への方向を求める
+        if (isFlying)
+            return;
+
+        // 飛ぶ方向
         flyDirection = (transform.position - attackPosition).normalized;
-
-        // 地面に沿って飛ばす
         flyDirection.y = 0;
+        flyDirection.Normalize();
 
-        // 飛行開始
         isFlying = true;
-
-        // タイマーをリセット
         lifeTimer = lifeTime;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        // 自分が飛んでいなければ何もしない
         if (!isFlying)
             return;
 
-        // 相手がEnemyなら
-        EnemyController enemy =
-            collision.gameObject.GetComponent<EnemyController>();
+        EnemyController enemy = other.GetComponent<EnemyController>();
 
-        if (enemy != null)
+        if (enemy != null && !enemy.IsFlying)
         {
-            Debug.Log("連鎖！");
+            enemy.KnockBack(transform.position);
+        }
+
+        if (other.CompareTag("Wall"))
+        {
+            Destroy(gameObject);
         }
     }
 }
