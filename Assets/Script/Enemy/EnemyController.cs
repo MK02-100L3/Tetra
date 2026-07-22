@@ -1,16 +1,25 @@
 using UnityEngine;
-
 public class EnemyController : MonoBehaviour
 {
+    private Rigidbody rb;
     // 飛んでいるかどうか
     private bool isFlying = false;
     public bool IsFlying => isFlying;
-
     // 飛ぶ方向
     private Vector3 flyDirection;
 
     // 消えるまでの時間
     private float lifeTimer;
+
+    // プレイヤー
+    private Transform player;
+
+    // スコア管理クラス
+    private ScoreManager scoreManager;
+
+    // 敵の移動速度
+    [SerializeField]
+    private float moveSpeed = 3.0f;
 
     // 飛ぶ速度
     [SerializeField]
@@ -20,20 +29,41 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private float lifeTime = 2.0f;
 
+    void Start()
+    {
+        // Scene内のScoreManagerを取得
+        scoreManager = FindFirstObjectByType<ScoreManager>();
+
+        // Playerタグのオブジェクトを探す
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        rb = GetComponent<Rigidbody>();
+
+        // 重力を使わない
+        rb.useGravity = false;
+
+        // 物理演算では動かさない
+        rb.isKinematic = true;
+    }
+
     void Update()
     {
         if (!isFlying)
+        {
+            MoveToPlayer();
             return;
+        }
 
-        // 一直線に移動
+
+        // 一直線に飛ぶ
         transform.position += flyDirection * flySpeed * Time.deltaTime;
 
-        // タイマーを減らす
+        // タイマー
         lifeTimer -= Time.deltaTime;
 
-        // 一定時間経ったら消える
         if (lifeTimer <= 0)
         {
+            scoreManager.AddScore(100);
             Destroy(gameObject);
         }
     }
@@ -41,32 +71,53 @@ public class EnemyController : MonoBehaviour
     // プレイヤーから吹っ飛ばされる
     public void KnockBack(Vector3 attackPosition)
     {
-        // 攻撃地点から敵への方向を求める
+        if (isFlying)
+            return;
+
+        // 飛ぶ方向
         flyDirection = (transform.position - attackPosition).normalized;
-
-        // 地面に沿って飛ばす
         flyDirection.y = 0;
+        flyDirection.Normalize();
 
-        // 飛行開始
         isFlying = true;
-
-        // タイマーをリセット
         lifeTimer = lifeTime;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        // 自分が飛んでいなければ何もしない
         if (!isFlying)
             return;
 
-        // 相手がEnemyなら
-        EnemyController enemy =
-            collision.gameObject.GetComponent<EnemyController>();
+        EnemyController enemy = other.GetComponent<EnemyController>();
 
-        if (enemy != null)
+        if (enemy != null && !enemy.IsFlying)
         {
-            Debug.Log("連鎖！");
+            enemy.KnockBack(transform.position);
         }
+
+        if (other.CompareTag("Wall"))
+        {
+            scoreManager.AddScore(100);
+            Destroy(gameObject);
+        }
+    }
+
+    /// <summary>
+    /// プレイヤーへ向かって移動する
+    /// </summary>
+    private void MoveToPlayer()
+    {
+        // Playerが見つからなければ何もしない
+        if (player == null)
+            return;
+
+        // プレイヤーへの方向を計算
+        Vector3 direction = (player.position - transform.position).normalized;
+
+        // 地面に沿って移動するためY方向を無視
+        direction.y = 0;
+
+        // プレイヤーへ向かって移動
+        transform.position += direction * moveSpeed * Time.deltaTime;
     }
 }
