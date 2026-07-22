@@ -4,6 +4,7 @@ public class EnemyController : MonoBehaviour
 {
     // 飛んでいるかどうか
     private bool isFlying = false;
+    public bool IsFlying => isFlying;
 
     // 飛ぶ方向
     private Vector3 flyDirection;
@@ -51,5 +52,21 @@ public class EnemyController : MonoBehaviour
 
         // タイマーをリセット
         lifeTimer = lifeTime;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // 自分が飛んでいなければ何もしない
+        if (!isFlying)
+            return;
+
+        // 相手がEnemyなら
+        EnemyController enemy =
+            collision.gameObject.GetComponent<EnemyController>();
+
+        if (enemy != null)
+        {
+            Debug.Log("連鎖！");
+        }
     }
 }
