@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     public float moveSpeed = 5.0f;
-
+  
     void Update()
     {
         Vector3 move = Vector3.zero;
