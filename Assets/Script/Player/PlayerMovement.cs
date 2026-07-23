@@ -17,6 +17,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float moveSpeed = 5.0f;
 
+    // プレイヤーを動かす基準となるカメラ
+    // InspectorからMain Cameraを設定する
+    [SerializeField]
+    private Transform cameraTransform;
+
+    [SerializeField]
+    private Transform hitBox;
+
     void Start()
     {
         // Playerに付いているAnimatorを取得
@@ -35,9 +43,16 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // Swingアクションが押された瞬間を取得する
+        if (input.Player.Swing.WasPressedThisFrame())
+        {
+            Attack();
+        }
+
         // Moveアクションの入力を取得する
         // x = 左右、y = 前後
         Vector2 moveInput = input.Player.Move.ReadValue<Vector2>();
+
         // 入力があるかどうか
         bool isMoving = moveInput.sqrMagnitude > 0.01f;
  
@@ -53,14 +68,52 @@ public class PlayerMovement : MonoBehaviour
             moveDirection.Normalize();
         }
 
-
         // 移動速度を掛ける
         moveDirection *= moveSpeed;
 
         // フレームレートに依存しない速度にする
         moveDirection *= Time.deltaTime;
 
+        // 移動しているときだけプレイヤーの向きを変える
+        if (moveDirection != Vector3.zero)
+        {
+            transform.forward = moveDirection.normalized;
+        }
+
         // CharacterControllerでプレイヤーを移動させる
         controller.Move(moveDirection);
+    }
+
+    /// <summary>
+    /// 攻撃処理
+    /// </summary>
+    private void Swing()
+    {
+        Debug.Log("スイング！");
+    }
+
+    void Attack()
+    {
+        // HitBoxの半分の大きさ
+        Vector3 halfExtents = hitBox.localScale / 2.0f;
+
+        // HitBoxの範囲にあるColliderを取得
+        Collider[] hits = Physics.OverlapBox(
+            hitBox.position,
+            halfExtents,
+            hitBox.rotation);
+
+        foreach (Collider hit in hits)//foreach配列やリストの中身を1つずつ取り出す
+        {
+            if (hit.CompareTag("Enemy"))
+            {
+                EnemyController enemy = hit.GetComponent<EnemyController>();
+
+                if (enemy != null)
+                {
+                    enemy.KnockBack(transform.position);
+                }
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public class EnemyController : MonoBehaviour
 {
     private Rigidbody rb;
@@ -10,6 +11,7 @@ public class EnemyController : MonoBehaviour
 
     // 消えるまでの時間
     private float lifeTimer;
+
 
     // プレイヤー
     private Transform player;
@@ -28,6 +30,7 @@ public class EnemyController : MonoBehaviour
     // 消えるまでの時間
     [SerializeField]
     private float lifeTime = 2.0f;
+
 
     // Inspectorから敵ごとに点数を変更できる
     [SerializeField]
@@ -69,12 +72,14 @@ public class EnemyController : MonoBehaviour
         if (lifeTimer <= 0)
         {
             DestroyEnemy();
+
         }
     }
 
     // プレイヤーから吹っ飛ばされる
     public void KnockBack(Vector3 attackPosition)
     {
+
         if (isFlying)
             return;
 
@@ -149,3 +154,4 @@ public class EnemyController : MonoBehaviour
         Destroy(gameObject);
     }
 }
+
