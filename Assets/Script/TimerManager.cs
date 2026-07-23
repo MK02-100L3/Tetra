@@ -1,5 +1,7 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 /// <summary>
 /// 制限時間を管理するクラス
@@ -10,23 +12,26 @@ public class TimerManager : MonoBehaviour
     [SerializeField]
     private float timeLimit = 60f;
 
-    // タイマー表示用
+    // タイマー表示
     [SerializeField]
     private TMP_Text timerText;
 
-    // 現在の残り時間
+    // 現在時間
     private float currentTime;
+
+    // スコア管理
+    private ScoreManager scoreManager;
 
     // タイムアップしたか
     public bool IsTimeUp { get; private set; }
 
     void Start()
     {
-        // 初期時間を設定
         currentTime = timeLimit;
-
-        // 表示更新
         UpdateTimerText();
+
+        // Scene内のScoreManagerを取得
+        scoreManager = FindFirstObjectByType<ScoreManager>();
     }
 
     void Update()
@@ -38,16 +43,18 @@ public class TimerManager : MonoBehaviour
         // 時間を減らす
         currentTime -= Time.deltaTime;
 
-        // 0未満にならないようにする
+        // 0秒になったら
         if (currentTime <= 0)
         {
             currentTime = 0;
             IsTimeUp = true;
 
             Debug.Log("TIME UP!");
+
+            // リザルト画面へ移動する処理を開始
+            StartCoroutine(GameEnd());
         }
 
-        // UI更新
         UpdateTimerText();
     }
 
@@ -59,7 +66,23 @@ public class TimerManager : MonoBehaviour
         if (timerText == null)
             return;
 
-        // 小数点を表示せず整数だけ表示
         timerText.text = "Time : " + Mathf.CeilToInt(currentTime);
+    }
+
+    /// <summary>
+    /// タイムアップ後の処理
+    /// </summary>
+    private IEnumerator GameEnd()
+    {
+        // 最終スコアを保存
+        GameData.Score = scoreManager.Score;
+
+        Debug.Log("2秒待機開始");
+        // 2秒待つ
+        yield return new WaitForSeconds(2f);
+
+        Debug.Log("Resultへ移動します");
+        // Resultシーンへ移動
+        SceneManager.LoadScene("Result");
     }
 }

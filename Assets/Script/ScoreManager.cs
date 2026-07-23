@@ -9,14 +9,12 @@ public class ScoreManager : MonoBehaviour
     // 現在のスコア
     private int score = 0;
 
+    // 現在のスコアを取得する
+    public int Score => score;
+
     // スコア表示用のText
     [SerializeField]
     private TMP_Text scoreText;
-
-    /// <summary>
-    /// 現在のスコアを取得する
-    /// </summary>
-    public int Score => score;
 
     void Start()
     {

@@ -63,4 +63,16 @@ public class PlayerMovement : MonoBehaviour
         // CharacterControllerでプレイヤーを移動させる
         controller.Move(moveDirection);
     }
+
+    /// <summary>
+    /// オブジェクトが無効化・破棄されるときに入力を停止する
+    /// </summary>
+    private void OnDisable()
+    {
+        // inputが存在するときだけ入力を無効化
+        if (input != null)
+        {
+            input.Disable();
+        }
+    }
 }
