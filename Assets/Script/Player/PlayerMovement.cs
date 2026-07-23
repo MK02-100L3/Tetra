@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour
     // CharacterControllerコンポーネント
     // プレイヤーを移動させるために使用する
     private CharacterController controller;
+    // Animator
+    private Animator animator;
 
     // プレイヤーの移動速度
     // SerializeFieldを付けるとInspectorから値を変更できる
@@ -25,6 +27,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+        // Playerに付いているAnimatorを取得
+        animator = GetComponent<Animator>();
         // PlayerInputActionsクラスを生成する
         // これでInputActionsで設定したMoveやLookなどを使えるようになる
         input = new PlayerInputActions();
@@ -49,23 +53,21 @@ public class PlayerMovement : MonoBehaviour
         // x = 左右、y = 前後
         Vector2 moveInput = input.Player.Move.ReadValue<Vector2>();
 
-        // カメラの前方向と右方向を取得する
-        Vector3 forward = cameraTransform.forward;
-        Vector3 right = cameraTransform.right;
-
-        // 上下方向の移動をなくす
-        // カメラが少し下を向いていても地面に沿って移動できるようにする
-        forward.y = 0;
-        right.y = 0;
-
-        // ベクトルの長さを1にそろえる
-        forward.Normalize();
-        right.Normalize();
-
-        // 入力方向をカメラ基準の移動方向へ変換する
-        Vector3 moveDirection =
-            forward * moveInput.y +
-            right * moveInput.x;
+        // 入力があるかどうか
+        bool isMoving = moveInput.sqrMagnitude > 0.01f;
+        //アニメーション
+        animator.SetBool("Run", isMoving);
+        // Vector2をVector3へ変換する
+        Vector3 moveDirection = new Vector3(
+            moveInput.x,
+            0,
+            moveInput.y
+        );
+        // 斜め移動が速くならないようにする
+        if (moveDirection.sqrMagnitude > 1.0f)
+        {
+            moveDirection.Normalize();
+        }
 
         // 移動速度を掛ける
         moveDirection *= moveSpeed;
