@@ -29,6 +29,10 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private float lifeTime = 2.0f;
 
+    // Inspectorから敵ごとに点数を変更できる
+    [SerializeField]
+    private int scoreValue = 100;
+
     void Start()
     {
         // Scene内のScoreManagerを取得
@@ -61,10 +65,10 @@ public class EnemyController : MonoBehaviour
         // タイマー
         lifeTimer -= Time.deltaTime;
 
+        // 飛んでいる時間が終わったら撃破
         if (lifeTimer <= 0)
         {
-            scoreManager.AddScore(100);
-            Destroy(gameObject);
+            DestroyEnemy();
         }
     }
 
@@ -95,10 +99,10 @@ public class EnemyController : MonoBehaviour
             enemy.KnockBack(transform.position);
         }
 
+        // 壁に当たったら撃破
         if (other.CompareTag("Wall"))
         {
-            scoreManager.AddScore(100);
-            Destroy(gameObject);
+            DestroyEnemy();
         }
     }
 
@@ -119,5 +123,29 @@ public class EnemyController : MonoBehaviour
 
         // プレイヤーへ向かって移動
         transform.position += direction * moveSpeed * Time.deltaTime;
+    }
+
+    /// <summary>
+    /// スコアを加算して敵を削除する
+    /// </summary>
+    private void DestroyEnemy()
+    {
+        // ScoreManagerが存在する場合のみ加算する
+        if (scoreManager != null)
+        {
+            scoreManager.AddScore(scoreValue);
+        }
+
+        // 敵を削除
+        Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// スコアを加算せずに敵を削除する
+    /// タイムアップ時などで使用する
+    /// </summary>
+    public void DestroyWithoutScore()
+    {
+        Destroy(gameObject);
     }
 }

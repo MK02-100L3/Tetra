@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -8,10 +9,20 @@ public class ScoreManager : MonoBehaviour
     // 現在のスコア
     private int score = 0;
 
+    // スコア表示用のText
+    [SerializeField]
+    private TMP_Text scoreText;
+
     /// <summary>
     /// 現在のスコアを取得する
     /// </summary>
     public int Score => score;
+
+    void Start()
+    {
+        // ゲーム開始時に表示を更新
+        UpdateScoreText();
+    }
 
     /// <summary>
     /// スコアを加算する
@@ -19,9 +30,23 @@ public class ScoreManager : MonoBehaviour
     /// <param name="point">加算する点数</param>
     public void AddScore(int point)
     {
+        // スコアを加算
         score += point;
 
-        // コンソールに現在のスコアを表示
-        Debug.Log("現在のスコア：" + score);
+        // UIを更新
+        UpdateScoreText();
+    }
+
+    /// <summary>
+    /// スコア表示を更新する
+    /// </summary>
+    private void UpdateScoreText()
+    {
+        // Textが設定されていない場合は何もしない
+        if (scoreText == null)
+            return;
+
+        // スコアを表示
+        scoreText.text = "Score : " + score;
     }
 }
