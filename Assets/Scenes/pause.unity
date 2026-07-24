@@ -119,6 +119,52 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &144665429
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 144665431}
+  - component: {fileID: 144665430}
+  m_Layer: 0
+  m_Name: Pouse
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &144665430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 144665429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 423888e8e9319054d917c380bc3f98a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pouse
+  pauseScreen: {fileID: 1282975140}
+  firstButton: {fileID: 388998445}
+--- !u!4 &144665431
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 144665429}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &388998443
 GameObject:
   m_ObjectHideFlags: 0
@@ -222,7 +268,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 437f931bedb335a408ffa3614b7405a5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b6d14a9d531d59346b554ae6f03f5e4a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -572,10 +618,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 21300000, guid: 7a566c41a20ca014a9fa0d1cfb24b2b0, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 7a566c41a20ca014a9fa0d1cfb24b2b0, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 7a566c41a20ca014a9fa0d1cfb24b2b0, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 01ae94246ef11954080a5749ab028665, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -607,7 +653,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7a566c41a20ca014a9fa0d1cfb24b2b0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 01ae94246ef11954080a5749ab028665, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1048,7 +1094,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d51ce66b0a412f34a84300fe13869b23, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ece33050cb8a6484f97dd3301aed1e15, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1303,3 +1349,4 @@ SceneRoots:
   - {fileID: 534261473}
   - {fileID: 1282975144}
   - {fileID: 1587483292}
+  - {fileID: 144665431}
