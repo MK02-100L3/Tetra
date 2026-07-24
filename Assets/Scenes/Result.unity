@@ -122,6 +122,7 @@ NavMeshSettings:
 
 
 
+
 --- !u!1 &509546758
 
 GameObject:
@@ -661,16 +662,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
 --- !u!114 &1146865164
+
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 317512975929268018, guid: 0e353673e36ba664289ad637a367e968, type: 3}
+  m_PrefabInstance: {fileID: 1280074493}
   m_PrefabAsset: {fileID: 0}
+
   m_GameObject: {fileID: 1146865162}
+
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
+
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 0
   m_ReferencePixelsPerUnit: 100
@@ -727,6 +731,7 @@ RectTransform:
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!1 &1931006613
+
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -753,7 +758,7 @@ RectTransform:
 
   m_GameObject: {fileID: 1813485941}
   serializedVersion: 2
-  
+
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 9.5, y: 5.5, z: 1}
@@ -781,7 +786,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneChange
 --- !u!4 &1962682452
 Transform:
-
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -789,20 +793,18 @@ Transform:
 
   m_GameObject: {fileID: 1962682450}
   serializedVersion: 2
-
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-
-
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+
 
 
 
@@ -811,6 +813,7 @@ SceneRoots:
   - {fileID: 1962682452}
   - {fileID: 1266019985}
   - {fileID: 1813485944}
+
 
 
 
