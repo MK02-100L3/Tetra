@@ -85,6 +85,15 @@ public class PlayerMovement : MonoBehaviour
     }
 
     /// <summary>
+
+    /// オブジェクトが無効化・破棄されるときに入力を停止する
+    /// </summary>
+    private void OnDisable()
+    {
+        // inputが存在するときだけ入力を無効化
+        if (input != null)
+        {
+            input.Disable();
     /// 攻撃処理
     /// </summary>
     private void Swing()
@@ -114,6 +123,7 @@ public class PlayerMovement : MonoBehaviour
                     enemy.KnockBack(transform.position);
                 }
             }
+
         }
     }
 }

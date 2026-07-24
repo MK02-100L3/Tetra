@@ -1,37 +1,52 @@
 using UnityEngine;
 
+/// <summary>
+/// 敵を一定時間ごとにスポーンするクラス
+/// </summary>
 public class EnemySpawner : MonoBehaviour
 {
-    // 生成する敵のPrefab（Inspectorから設定）
-    [SerializeField] private GameObject enemyPrefab;
+    // 生成する敵Prefab
+    [SerializeField]
+    private GameObject enemyPrefab;
 
-    // 敵を生成する間隔（秒）
-    [SerializeField] private float spawnInterval = 1f;
+    // 生成間隔
+    [SerializeField]
+    private float spawnInterval = 1f;
 
-    // 経過時間を測るタイマー
+    // タイマー
     private float timer;
+
+    // タイマー管理クラス
+    private TimerManager timerManager;
+
+    void Start()
+    {
+        // Scene内のTimerManagerを取得
+        timerManager = FindFirstObjectByType<TimerManager>();
+    }
 
     void Update()
     {
-        // 毎フレーム経過時間を加算する
+        // タイムアップしたら敵を生成しない
+        if (timerManager != null && timerManager.IsTimeUp)
+            return;
+
+        // 時間を加算
         timer += Time.deltaTime;
 
-        // 一定時間経過したら敵を生成する
+        // 一定時間経過したら敵を生成
         if (timer >= spawnInterval)
         {
             SpawnEnemy();
-
-            // タイマーをリセットして次の生成まで待つ
             timer = 0f;
         }
     }
 
     /// <summary>
-    /// 敵をスポナーの位置に生成する
+    /// 敵を生成する
     /// </summary>
-    void SpawnEnemy()
+    private void SpawnEnemy()
     {
-        // enemyPrefabを、このオブジェクトの位置に、回転なしで生成する
         Instantiate(enemyPrefab, transform.position, Quaternion.identity);
     }
 }

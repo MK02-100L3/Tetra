@@ -81,4 +81,16 @@ public class GameCamera : MonoBehaviour
         // プレイヤーの位置に反映
         transform.position = player.transform.position + cameraMove;
     }
+
+    /// <summary>
+    /// オブジェクトが無効化・破棄されるときに入力を停止する
+    /// </summary>
+    private void OnDisable()
+    {
+        // inputが生成されている場合のみ入力を停止
+        if (input != null)
+        {
+            input.Disable();
+        }
+    }
 }
