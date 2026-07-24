@@ -55,13 +55,24 @@ public class PlayerMovement : MonoBehaviour
 
         // 入力があるかどうか
         bool isMoving = moveInput.sqrMagnitude > 0.01f;
- 
-        // Vector2をVector3へ変換する
-        Vector3 moveDirection = new Vector3(
-            moveInput.x,
-            0,
-            moveInput.y
-        );
+
+        // カメラの前方向と右方向を取得
+        Vector3 forward = cameraTransform.forward;
+        Vector3 right = cameraTransform.right;
+
+        // 上下方向は無視して地面に沿って移動させる
+        forward.y = 0;
+        right.y = 0;
+
+        // 長さを1にそろえる
+        forward.Normalize();
+        right.Normalize();
+
+        // カメラ基準で移動方向を作る
+        Vector3 moveDirection =
+            forward * moveInput.y +
+            right * moveInput.x;
+
         // 斜め移動が速くならないようにする
         if (moveDirection.sqrMagnitude > 1.0f)
         {
@@ -123,6 +134,8 @@ public class PlayerMovement : MonoBehaviour
                 if (enemy != null)
                 {
                     enemy.KnockBack(transform.position);
+                    // 0.05秒ヒットストップ
+                    HitStopManager.Instance.StartHitStop(0.05f);
                 }
             }
 
