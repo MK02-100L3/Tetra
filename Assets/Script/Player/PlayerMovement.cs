@@ -55,8 +55,7 @@ public class PlayerMovement : MonoBehaviour
 
         // 入力があるかどうか
         bool isMoving = moveInput.sqrMagnitude > 0.01f;
-        //アニメーション
-        animator.SetBool("Run", isMoving);
+ 
         // Vector2をVector3へ変換する
         Vector3 moveDirection = new Vector3(
             moveInput.x,
