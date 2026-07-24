@@ -94,6 +94,8 @@ public class PlayerMovement : MonoBehaviour
         if (input != null)
         {
             input.Disable();
+        }
+    }
     /// 攻撃処理
     /// </summary>
     private void Swing()
