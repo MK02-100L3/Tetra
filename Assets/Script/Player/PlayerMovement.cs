@@ -47,6 +47,8 @@ public class PlayerMovement : MonoBehaviour
         // Swingアクションが押された瞬間を取得する
         if (input.Player.Swing.WasPressedThisFrame())
         {
+            animator.SetTrigger("Strike");
+            Debug.Log("スイング！");
             Attack();
         }
 
@@ -60,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
         // Animatorへ渡す
         animator.SetBool("Run", isMoving);
 
-        Debug.Log(isMoving);
+        //Debug.Log(isMoving);
 
         // カメラの前方向と右方向を取得
         Vector3 forward = cameraTransform.forward;
