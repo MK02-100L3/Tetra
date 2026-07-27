@@ -16,6 +16,8 @@ public class EnemyController : MonoBehaviour
     // 消えるまでの時間
     private float lifeTimer;
 
+    // あと何回連鎖できるか
+    private int chainLevel = 0;
 
     // プレイヤー
     private Transform player;
@@ -105,24 +107,29 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    // プレイヤーから吹っ飛ばされる
-    public void KnockBack(Vector3 attackPosition)
+    /// <summary>
+    /// 敵を吹っ飛ばす
+    /// </summary>
+    /// <param name="attackPosition">攻撃した位置</param>
+    /// <param name="chainLevel">あと何回連鎖できるか</param>
+    public void KnockBack(Vector3 attackPosition, int chainLevel)
     {
-
+        // すでに飛んでいたら何もしない
         if (isFlying)
             return;
 
-        // 飛ぶ方向を計算する
+        // この敵の連鎖回数を保存
+        this.chainLevel = chainLevel;
+
+        // 飛ぶ方向を計算
         flyDirection = (transform.position - attackPosition).normalized;
-        // 少し上方向にも飛ばす
-        flyDirection.y = 0.3f;
-        // ベクトルの長さを1にそろえる
+        flyDirection.y = 0;
         flyDirection.Normalize();
 
+        // 飛行開始
         isFlying = true;
         lifeTimer = lifeTime;
     }
-
     private void OnTriggerEnter(Collider other)
     {
         if (!isFlying)
@@ -132,14 +139,19 @@ public class EnemyController : MonoBehaviour
 
         if (enemy != null && !enemy.IsFlying)
         {
-            // 敵同士がぶつかった音を再生
-            audioSource.PlayOneShot(chainHitSE);
-
-            // 自分を一瞬停止させる
-            StartCoroutine(HitPause());
-
             // 相手を吹っ飛ばす
-            enemy.KnockBack(transform.position);
+            // まだ連鎖できるなら
+            if (chainLevel > 0)
+            {
+                // 効果音
+                audioSource.PlayOneShot(chainHitSE);
+
+                // 一瞬停止
+                StartCoroutine(HitPause());
+
+                // 相手へ残り回数を渡す
+                enemy.KnockBack(transform.position, chainLevel - 1);
+            }
         }
 
         // 壁に当たったら撃破
@@ -173,6 +185,7 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     private void DestroyEnemy()
     {
+        chainLevel = 0;
         // ScoreManagerが存在する場合のみ加算する
         if (scoreManager != null)
         {

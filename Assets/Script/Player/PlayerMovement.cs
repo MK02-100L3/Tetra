@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -40,6 +41,16 @@ public class PlayerMovement : MonoBehaviour
     // 攻撃中かどうか
     private bool isAttacking = false;
 
+    // チャージ中かどうか
+    private bool isCharging = false;
+
+    // 現在のチャージ時間
+    private float chargeTime = 0.0f;
+
+    // 最大チャージ時間
+    [SerializeField]
+    private float maxChargeTime = 1.0f;
+
     void Start()
     {
         // Playerに付いているAnimatorを取得
@@ -60,10 +71,37 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        bool attackInput = input.Player.Charge.IsPressed();
 
-        // Swingアクションが押された瞬間を取得する
-        if (input.Player.Swing.WasPressedThisFrame() && !isAttacking)
+        // チャージ開始
+        if (attackInput && !isCharging && !isAttacking)
         {
+            isCharging = true;
+            chargeTime = 0.0f;
+
+            animator.SetBool("Charging", true);
+
+            Debug.Log("チャージ開始");
+        }
+
+        // 攻撃中はチャージしない
+        if (isCharging && !isAttacking)
+        {
+            // 時間を加算
+            chargeTime += Time.deltaTime;
+
+            // 最大時間までしか溜めない
+            chargeTime = Mathf.Clamp(chargeTime, 0.0f, maxChargeTime);
+        }
+
+        // スティックを離したら攻撃
+        if (!attackInput && isCharging)
+        {
+            isCharging = false;
+            animator.SetBool("Charging", false);
+            Debug.Log("チャージ終了");
+            Debug.Log(chargeTime);
+
             StartCoroutine(AttackRoutine());
         }
 
@@ -115,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //攻撃中は移動できない
-        if (!isAttacking)
+        if (!isAttacking && !isCharging)
         {
             controller.Move(moveDirection);
         }
@@ -140,13 +178,28 @@ public class PlayerMovement : MonoBehaviour
     }
     /// 攻撃処理
     /// </summary>
-    private void Swing()
-    {
-        Debug.Log("スイング！");
-    }
+    //private void Swing()
+    //{
+    //    Debug.Log("スイング！");
+    //}
 
     public void Attack()
     {
+        Debug.Log("Attack()が呼ばれた");
+
+        // チャージ量によって連鎖回数を決める
+        int chainLevel;
+
+        // 最大チャージなら無限連鎖
+        if (chargeTime >= maxChargeTime)
+        {
+            chainLevel = 999;
+        }
+        else
+        {
+            // 通常攻撃は5回だけ連鎖
+            chainLevel = 5;
+        }
         // HitBoxの半分の大きさ
         Vector3 halfExtents = hitBox.localScale / 2.0f;
 
@@ -164,7 +217,7 @@ public class PlayerMovement : MonoBehaviour
 
                 if (enemy != null)
                 {
-                    enemy.KnockBack(transform.position);
+                    enemy.KnockBack(transform.position, chainLevel);
 
                     GameCamera cameraShake = cameraTransform.GetComponent<GameCamera>();
 

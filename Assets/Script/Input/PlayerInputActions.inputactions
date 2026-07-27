@@ -25,9 +25,9 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Swing",
+                    "name": "Charge",
                     "type": "Button",
-                    "id": "de553e55-3e7f-4b1e-92e2-201c44fd73fd",
+                    "id": "80a0c017-ac82-4ade-a9ae-c232cb734db3",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -170,7 +170,7 @@
                 {
                     "name": "up",
                     "id": "b2631160-137c-493b-a000-ce9425d07d31",
-                    "path": "<Keyboard>/i",
+                    "path": "<Keyboard>/k",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -181,7 +181,7 @@
                 {
                     "name": "down",
                     "id": "6055af64-c635-41ca-b23f-8500b1063b91",
-                    "path": "<Keyboard>/k",
+                    "path": "<Keyboard>/i",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -192,7 +192,7 @@
                 {
                     "name": "left",
                     "id": "a69d5169-b5f6-4398-b8ff-c979077b1b35",
-                    "path": "<Keyboard>/j",
+                    "path": "<Keyboard>/l",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -203,7 +203,7 @@
                 {
                     "name": "right",
                     "id": "672f7c7d-ea0a-472e-92c7-80c49fcc9d4e",
-                    "path": "<Keyboard>/l",
+                    "path": "<Keyboard>/j",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -213,23 +213,23 @@
                 },
                 {
                     "name": "",
-                    "id": "14cb4e5a-ffaa-4925-be54-88c667e5e332",
+                    "id": "49304847-35a9-4250-8967-dc253ea0f401",
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Swing",
+                    "action": "Charge",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "898d323c-2b02-4c93-a903-d00c77b2b154",
-                    "path": "<Gamepad>/rightStickPress",
+                    "id": "b7c90252-c127-4ac2-8250-7aeccf03bbf4",
+                    "path": "<Gamepad>/rightStick/down",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Swing",
+                    "action": "Charge",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
