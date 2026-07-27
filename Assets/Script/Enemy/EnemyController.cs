@@ -155,6 +155,16 @@ public class EnemyController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("Player"))
+        {
+            PlayerMovement player = other.GetComponent<PlayerMovement>();
+
+            if (player != null)
+            {
+                player.Damage(transform.position);
+            }
+        }
+
         if (!isFlying)
             return;
 
@@ -248,5 +258,6 @@ public class EnemyController : MonoBehaviour
         // 飛行を再開する
         isPaused = false;
     }
+
 }
 
