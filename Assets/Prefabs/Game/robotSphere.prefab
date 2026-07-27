@@ -2689,6 +2689,10 @@ MonoBehaviour:
   lifeTime: 2
   scoreValue: 100
   chainHitSE: {fileID: 8300000, guid: 1f4584df43ccef940a426367e0b14266, type: 3}
+  normalFlySpeed: 15
+  maxFlySpeed: 25
+  normalRotateSpeed: 900
+  maxRotateSpeed: 1800
 --- !u!82 &3894066072269293439
 AudioSource:
   m_ObjectHideFlags: 0

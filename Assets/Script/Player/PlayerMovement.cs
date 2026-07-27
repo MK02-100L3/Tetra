@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -37,8 +38,31 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private GameObject hitEffect;
 
+    // 最大チャージエフェクト
+    [SerializeField]
+    private GameObject maxChargeEffect;
+
+    // 最大チャージ演出を出したか
+    private bool maxChargeEffectPlayed = false;
+
     // 攻撃中かどうか
     private bool isAttacking = false;
+
+    // チャージ中かどうか
+    private bool isCharging = false;
+
+    // 現在のチャージ時間
+    private float chargeTime = 0.0f;
+
+    // 最大チャージ時間
+    [SerializeField]
+    private float maxChargeTime = 1.0f;
+
+    // 通常攻撃の最大連鎖回数
+    private const int NormalChainLevel = 1;
+
+    // 最大チャージ時の最大連鎖回数
+    private const int MaxChainLevel = 999;
 
     void Start()
     {
@@ -60,10 +84,57 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        bool attackInput = input.Player.Charge.IsPressed();
 
-        // Swingアクションが押された瞬間を取得する
-        if (input.Player.Swing.WasPressedThisFrame() && !isAttacking)
+        // チャージ開始
+        if (attackInput && !isCharging && !isAttacking)
         {
+            isCharging = true;
+            chargeTime = 0.0f;
+
+            maxChargeEffectPlayed = false;
+
+            animator.SetBool("Charging", true);
+
+            Debug.Log("チャージ開始");
+        }
+
+        // 攻撃中はチャージしない
+        if (isCharging && !isAttacking)
+        {
+            // 時間を加算
+            chargeTime += Time.deltaTime;
+
+            // 最大時間までしか溜めない
+            chargeTime = Mathf.Clamp(chargeTime, 0.0f, maxChargeTime);
+
+            if (chargeTime >= maxChargeTime && !maxChargeEffectPlayed)
+            {
+                maxChargeEffectPlayed = true;
+
+                Instantiate(
+                    maxChargeEffect,
+                    transform.position + Vector3.up * 1.0f,
+                    Quaternion.identity,
+                    transform);
+            }
+        }
+
+        // スティックを離したら攻撃
+        if (!attackInput && isCharging)
+        {
+            foreach (Transform child in transform)
+            {
+                if (child.CompareTag("MaxChargeEffect"))
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+            isCharging = false;
+            animator.SetBool("Charging", false);
+            Debug.Log("チャージ終了");
+            Debug.Log(chargeTime);
+
             StartCoroutine(AttackRoutine());
         }
 
@@ -115,7 +186,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //攻撃中は移動できない
-        if (!isAttacking)
+        if (!isAttacking && !isCharging)
         {
             controller.Move(moveDirection);
         }
@@ -140,13 +211,28 @@ public class PlayerMovement : MonoBehaviour
     }
     /// 攻撃処理
     /// </summary>
-    private void Swing()
-    {
-        Debug.Log("スイング！");
-    }
+    //private void Swing()
+    //{
+    //    Debug.Log("スイング！");
+    //}
 
     public void Attack()
     {
+        Debug.Log("Attack()が呼ばれた");
+
+        // チャージ量によって連鎖回数を決める
+        bool isMaxCharge = chargeTime >= maxChargeTime;
+
+        int chainLevel;
+
+        if (isMaxCharge)
+        {
+            chainLevel = MaxChainLevel;
+        }
+        else
+        {
+            chainLevel = NormalChainLevel;
+        }
         // HitBoxの半分の大きさ
         Vector3 halfExtents = hitBox.localScale / 2.0f;
 
@@ -164,7 +250,7 @@ public class PlayerMovement : MonoBehaviour
 
                 if (enemy != null)
                 {
-                    enemy.KnockBack(transform.position);
+                    enemy.KnockBack(transform.position,chainLevel,isMaxCharge);
 
                     GameCamera cameraShake = cameraTransform.GetComponent<GameCamera>();
 
@@ -192,6 +278,7 @@ public class PlayerMovement : MonoBehaviour
 
     private System.Collections.IEnumerator AttackRoutine()
     {
+        Debug.Log("Routine開始");
         // 攻撃開始
         isAttacking = true;
 
