@@ -32,16 +32,6 @@ public class Pouse : MonoBehaviour
 
     void Update()
     {
-        
-    }
-
-    public void Pause()
-    {
-        //Gameシーン以外では何もしない
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Main")
-        {
-            return;
-        }
         // キーボードが認識されていて、
         // Escキーがこのフレームで押された場合
         if (Keyboard.current != null &&
