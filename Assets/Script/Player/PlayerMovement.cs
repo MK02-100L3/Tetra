@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -58,6 +59,24 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float maxChargeTime = 1.0f;
 
+    // 無敵中か
+    private bool isInvincible = false;
+
+    // ノックバック中か
+    private bool isKnockBack = false;
+
+    // ノックバック速度
+    private Vector3 knockBackVelocity;
+
+    [SerializeField]
+    private float knockBackPower = 8f;
+
+    [SerializeField]
+    private float knockBackTime = 0.2f;
+
+    [SerializeField]
+    private float invincibleTime = 1.0f;
+
     // 通常攻撃の最大連鎖回数
     private const int NormalChainLevel = 1;
 
@@ -84,6 +103,12 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (isKnockBack)
+        {
+            controller.Move(knockBackVelocity * Time.deltaTime);
+            return;
+        }
+
         bool attackInput = input.Player.Charge.IsPressed();
 
         // チャージ開始
@@ -318,5 +343,90 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.DrawWireCube(
             Vector3.zero,
             hitBox.localScale);
+    }
+
+    public void Damage(Vector3 enemyPos)
+    {
+        if (isInvincible)
+            return;
+
+        StartCoroutine(DamageRoutine(enemyPos));
+    }
+
+    private IEnumerator DamageRoutine(Vector3 enemyPos)
+    {
+        isInvincible = true;
+        isKnockBack = true;
+        maxChargeEffectPlayed = false;
+
+        // チャージ解除
+        isCharging = false;
+        animator.SetBool("Charging", false);
+
+        // 最大チャージエフェクト削除
+        foreach (Transform child in transform)
+        {
+            if (child.CompareTag("MaxChargeEffect"))
+                Destroy(child.gameObject);
+        }
+
+        // ノックバック方向
+        Vector3 dir = (transform.position - enemyPos).normalized;
+        dir.y = 0;
+
+        knockBackVelocity = dir * knockBackPower;
+
+        yield return new WaitForSeconds(knockBackTime);
+
+        knockBackVelocity = Vector3.zero;
+        isKnockBack = false;
+
+        StartCoroutine(BlinkRoutine());
+
+        yield return new WaitForSeconds(invincibleTime);
+
+        isInvincible = false;
+    }
+
+    private IEnumerator BlinkRoutine()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+
+        // 元の表示状態を保存
+        bool[] originalState = new bool[renderers.Length];
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            originalState[i] = renderers[i].enabled;
+        }
+
+        float timer = 0f;
+
+        while (timer < invincibleTime)
+        {
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (originalState[i])
+                    renderers[i].enabled = false;
+            }
+
+            yield return new WaitForSeconds(0.1f);
+
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (originalState[i])
+                    renderers[i].enabled = true;
+            }
+
+            yield return new WaitForSeconds(0.1f);
+
+            timer += 0.2f;
+        }
+
+        // 元の状態に戻す
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].enabled = originalState[i];
+        }
     }
 }
