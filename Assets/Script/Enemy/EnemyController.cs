@@ -1,7 +1,11 @@
 using UnityEngine;
+using System.Collections;
 
 public class EnemyController : MonoBehaviour
 {
+    // 飛んでいる敵を一時停止しているかどうか
+    private bool isPaused = false;
+
     private Rigidbody rb;
     // 飛んでいるかどうか
     private bool isFlying = false;
@@ -36,8 +40,22 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private int scoreValue = 100;
 
+    private AudioSource audioSource;
+
+    [SerializeField]
+    private AudioClip chainHitSE;   // 敵同士がぶつかった音
+
+    //[SerializeField]
+    //private AudioClip destroySE;    // 消滅音（後でもOK）
+
+    // 飛んでいるときの回転速度（度/秒）
+    [SerializeField]
+    private float rotateSpeed = 900.0f;
+
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
         // Scene内のScoreManagerを取得
         scoreManager = FindFirstObjectByType<ScoreManager>();
 
@@ -61,9 +79,20 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
+        // 一時停止中なら飛ばない
+        if (isPaused)
+        {
+            return;
+        }
 
         // 一直線に飛ぶ
         transform.position += flyDirection * flySpeed * Time.deltaTime;
+
+        // 飛んでいる間は転がるように回転する
+        transform.Rotate(
+            rotateSpeed * Time.deltaTime,
+            0.0f,
+            rotateSpeed * Time.deltaTime);
 
         // タイマー
         lifeTimer -= Time.deltaTime;
@@ -83,9 +112,11 @@ public class EnemyController : MonoBehaviour
         if (isFlying)
             return;
 
-        // 飛ぶ方向
+        // 飛ぶ方向を計算する
         flyDirection = (transform.position - attackPosition).normalized;
-        flyDirection.y = 0;
+        // 少し上方向にも飛ばす
+        flyDirection.y = 0.3f;
+        // ベクトルの長さを1にそろえる
         flyDirection.Normalize();
 
         isFlying = true;
@@ -101,6 +132,13 @@ public class EnemyController : MonoBehaviour
 
         if (enemy != null && !enemy.IsFlying)
         {
+            // 敵同士がぶつかった音を再生
+            audioSource.PlayOneShot(chainHitSE);
+
+            // 自分を一瞬停止させる
+            StartCoroutine(HitPause());
+
+            // 相手を吹っ飛ばす
             enemy.KnockBack(transform.position);
         }
 
@@ -152,6 +190,21 @@ public class EnemyController : MonoBehaviour
     public void DestroyWithoutScore()
     {
         Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// 飛んでいる敵を一定時間停止させる
+    /// </summary>
+    private IEnumerator HitPause()
+    {
+        // 飛ぶのを一時停止する
+        isPaused = true;
+
+        // 0.03秒停止する
+        yield return new WaitForSeconds(0.2f);//yield returnはここで一旦処理を止めて、あとで続きを実行するという意味
+
+        // 飛行を再開する
+        isPaused = false;
     }
 }
 

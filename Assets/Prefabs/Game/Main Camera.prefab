@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 2000859812550853561}
   - component: {fileID: 2676118435786238729}
   - component: {fileID: 6723561543464881282}
-  - component: {fileID: 8174695016429196554}
   - component: {fileID: 8292085229113778921}
+  - component: {fileID: 7093344884283727794}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 4229856923911786234}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -94,24 +94,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4229856923911786234}
   m_Enabled: 1
---- !u!114 &8174695016429196554
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4229856923911786234}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8a14dd1c6d98b140b08c41ded4cd75c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameCamera
-  RotSpeed: 0.5
-  RotUpLimit: 40
-  RotDownLimit: -20
-  CameraRange: 3
-  CameraY_Up: 1.5
-  player: {fileID: 0}
 --- !u!114 &8292085229113778921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -156,3 +138,21 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &7093344884283727794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4229856923911786234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8a14dd1c6d98b140b08c41ded4cd75c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameCamera
+  RotSpeed: 1.5
+  RotUpLimit: 40
+  RotDownLimit: -20
+  CameraRange: 5
+  CameraY_Up: 1.5
+  player: {fileID: 0}

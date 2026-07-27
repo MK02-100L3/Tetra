@@ -25,6 +25,21 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private Transform hitBox;
 
+    private AudioSource audioSource;
+
+    [SerializeField]
+    private AudioClip swingSE;
+
+    [SerializeField]
+    private AudioClip hitSE;
+
+    // ヒット時のエフェクト
+    [SerializeField]
+    private GameObject hitEffect;
+
+    // 攻撃中かどうか
+    private bool isAttacking = false;
+
     void Start()
     {
         // Playerに付いているAnimatorを取得
@@ -32,6 +47,8 @@ public class PlayerMovement : MonoBehaviour
         // PlayerInputActionsクラスを生成する
         // これでInputActionsで設定したMoveやLookなどを使えるようになる
         input = new PlayerInputActions();
+
+        audioSource = GetComponent<AudioSource>();
 
         // Playerに付いているCharacterControllerを取得する
         controller = GetComponent<CharacterController>();
@@ -45,11 +62,9 @@ public class PlayerMovement : MonoBehaviour
     {
 
         // Swingアクションが押された瞬間を取得する
-        if (input.Player.Swing.WasPressedThisFrame())
+        if (input.Player.Swing.WasPressedThisFrame() && !isAttacking)
         {
-            animator.SetTrigger("Strike");
-            Debug.Log("スイング！");
-            Attack();
+            StartCoroutine(AttackRoutine());
         }
 
         // Moveアクションの入力を取得する
@@ -99,8 +114,16 @@ public class PlayerMovement : MonoBehaviour
             transform.forward = moveDirection.normalized;
         }
 
-        // CharacterControllerでプレイヤーを移動させる
-        controller.Move(moveDirection);
+        //攻撃中は移動できない
+        if (!isAttacking)
+        {
+            controller.Move(moveDirection);
+        }
+
+        if (!isAttacking && moveDirection != Vector3.zero)
+        {
+            transform.forward = moveDirection.normalized;
+        }
     }
 
     /// <summary>
@@ -122,7 +145,7 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log("スイング！");
     }
 
-    void Attack()
+    public void Attack()
     {
         // HitBoxの半分の大きさ
         Vector3 halfExtents = hitBox.localScale / 2.0f;
@@ -142,11 +165,71 @@ public class PlayerMovement : MonoBehaviour
                 if (enemy != null)
                 {
                     enemy.KnockBack(transform.position);
+
+                    GameCamera cameraShake = cameraTransform.GetComponent<GameCamera>();
+
+                    if (cameraShake != null)
+                    {
+                        cameraShake.StartShake(0.1f, 0.25f);
+                    }
+
+                    audioSource.PlayOneShot(hitSE);
+
+                    // ヒット位置にエフェクトを生成
+                    // エフェクトを敵の少し上（1.5m上）に生成する
+                    Instantiate(
+                        hitEffect,
+                        hit.transform.position + Vector3.up * 1.5f,
+                        Quaternion.identity);
+
                     // 0.05秒ヒットストップ
                     HitStopManager.Instance.StartHitStop(0.05f);
                 }
             }
 
         }
+    }
+
+    private System.Collections.IEnumerator AttackRoutine()
+    {
+        // 攻撃開始
+        isAttacking = true;
+
+        // アニメーション再生
+        animator.SetTrigger("Strike");
+
+        // 当たる瞬間まで待つ
+        yield return new WaitForSeconds(0.2f);
+
+        // 攻撃判定
+        Attack();
+
+        audioSource.PlayOneShot(swingSE);
+
+        // アニメーション終了まで待つ
+        yield return new WaitForSeconds(0.3f);
+
+        // 攻撃終了
+        isAttacking = false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (hitBox == null)
+            return;
+
+        // 攻撃範囲を赤色で表示
+        Gizmos.color = Color.red;
+
+        // HitBoxと同じ位置・回転で描画
+        Gizmos.matrix = Matrix4x4.TRS(
+            hitBox.position,
+            hitBox.rotation,
+            Vector3.one);
+
+        // OverlapBoxと同じサイズ
+        Gizmos.DrawWireCube(
+            Vector3.zero,
+            hitBox.localScale);
     }
 }
