@@ -38,6 +38,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private GameObject hitEffect;
 
+    // 最大チャージエフェクト
+    [SerializeField]
+    private GameObject maxChargeEffect;
+
+    // 最大チャージ演出を出したか
+    private bool maxChargeEffectPlayed = false;
+
     // 攻撃中かどうか
     private bool isAttacking = false;
 
@@ -50,6 +57,12 @@ public class PlayerMovement : MonoBehaviour
     // 最大チャージ時間
     [SerializeField]
     private float maxChargeTime = 1.0f;
+
+    // 通常攻撃の最大連鎖回数
+    private const int NormalChainLevel = 1;
+
+    // 最大チャージ時の最大連鎖回数
+    private const int MaxChainLevel = 999;
 
     void Start()
     {
@@ -79,6 +92,8 @@ public class PlayerMovement : MonoBehaviour
             isCharging = true;
             chargeTime = 0.0f;
 
+            maxChargeEffectPlayed = false;
+
             animator.SetBool("Charging", true);
 
             Debug.Log("チャージ開始");
@@ -92,11 +107,29 @@ public class PlayerMovement : MonoBehaviour
 
             // 最大時間までしか溜めない
             chargeTime = Mathf.Clamp(chargeTime, 0.0f, maxChargeTime);
+
+            if (chargeTime >= maxChargeTime && !maxChargeEffectPlayed)
+            {
+                maxChargeEffectPlayed = true;
+
+                Instantiate(
+                    maxChargeEffect,
+                    transform.position + Vector3.up * 1.0f,
+                    Quaternion.identity,
+                    transform);
+            }
         }
 
         // スティックを離したら攻撃
         if (!attackInput && isCharging)
         {
+            foreach (Transform child in transform)
+            {
+                if (child.CompareTag("MaxChargeEffect"))
+                {
+                    Destroy(child.gameObject);
+                }
+            }
             isCharging = false;
             animator.SetBool("Charging", false);
             Debug.Log("チャージ終了");
@@ -188,17 +221,17 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log("Attack()が呼ばれた");
 
         // チャージ量によって連鎖回数を決める
+        bool isMaxCharge = chargeTime >= maxChargeTime;
+
         int chainLevel;
 
-        // 最大チャージなら無限連鎖
-        if (chargeTime >= maxChargeTime)
+        if (isMaxCharge)
         {
-            chainLevel = 999;
+            chainLevel = MaxChainLevel;
         }
         else
         {
-            // 通常攻撃は5回だけ連鎖
-            chainLevel = 5;
+            chainLevel = NormalChainLevel;
         }
         // HitBoxの半分の大きさ
         Vector3 halfExtents = hitBox.localScale / 2.0f;
@@ -217,7 +250,7 @@ public class PlayerMovement : MonoBehaviour
 
                 if (enemy != null)
                 {
-                    enemy.KnockBack(transform.position, chainLevel);
+                    enemy.KnockBack(transform.position,chainLevel,isMaxCharge);
 
                     GameCamera cameraShake = cameraTransform.GetComponent<GameCamera>();
 
@@ -245,6 +278,7 @@ public class PlayerMovement : MonoBehaviour
 
     private System.Collections.IEnumerator AttackRoutine()
     {
+        Debug.Log("Routine開始");
         // 攻撃開始
         isAttacking = true;
 

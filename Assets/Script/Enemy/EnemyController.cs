@@ -47,12 +47,24 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private AudioClip chainHitSE;   // 敵同士がぶつかった音
 
+    [SerializeField]
+    private float normalFlySpeed = 15f;
+
+    [SerializeField]
+    private float maxFlySpeed = 25f;
+
+    [SerializeField]
+    private float normalRotateSpeed = 900f;
+
+    [SerializeField]
+    private float maxRotateSpeed = 1800f;
+
+    private float currentFlySpeed;
+    private float currentRotateSpeed;
+
     //[SerializeField]
     //private AudioClip destroySE;    // 消滅音（後でもOK）
 
-    // 飛んでいるときの回転速度（度/秒）
-    [SerializeField]
-    private float rotateSpeed = 900.0f;
 
     void Start()
     {
@@ -88,13 +100,13 @@ public class EnemyController : MonoBehaviour
         }
 
         // 一直線に飛ぶ
-        transform.position += flyDirection * flySpeed * Time.deltaTime;
+        transform.position += flyDirection * currentFlySpeed * Time.deltaTime;
 
         // 飛んでいる間は転がるように回転する
         transform.Rotate(
-            rotateSpeed * Time.deltaTime,
+            currentRotateSpeed * Time.deltaTime,
             0.0f,
-            rotateSpeed * Time.deltaTime);
+            currentRotateSpeed * Time.deltaTime);
 
         // タイマー
         lifeTimer -= Time.deltaTime;
@@ -112,7 +124,7 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     /// <param name="attackPosition">攻撃した位置</param>
     /// <param name="chainLevel">あと何回連鎖できるか</param>
-    public void KnockBack(Vector3 attackPosition, int chainLevel)
+    public void KnockBack(Vector3 attackPosition, int chainLevel, bool isMaxCharge)
     {
         // すでに飛んでいたら何もしない
         if (isFlying)
@@ -120,6 +132,17 @@ public class EnemyController : MonoBehaviour
 
         // この敵の連鎖回数を保存
         this.chainLevel = chainLevel;
+
+        if (isMaxCharge)
+        {
+            currentFlySpeed = maxFlySpeed;
+            currentRotateSpeed = maxRotateSpeed;
+        }
+        else
+        {
+            currentFlySpeed = normalFlySpeed;
+            currentRotateSpeed = normalRotateSpeed;
+        }
 
         // 飛ぶ方向を計算
         flyDirection = (transform.position - attackPosition).normalized;
@@ -150,7 +173,7 @@ public class EnemyController : MonoBehaviour
                 StartCoroutine(HitPause());
 
                 // 相手へ残り回数を渡す
-                enemy.KnockBack(transform.position, chainLevel - 1);
+                enemy.KnockBack(transform.position, chainLevel - 1, currentFlySpeed == maxFlySpeed);
             }
         }
 
@@ -175,6 +198,12 @@ public class EnemyController : MonoBehaviour
 
         // 地面に沿って移動するためY方向を無視
         direction.y = 0;
+
+        // プレイヤーの方を向く
+        if (direction != Vector3.zero)
+        {
+            transform.forward = direction.normalized;
+        }
 
         // プレイヤーへ向かって移動
         transform.position += direction * moveSpeed * Time.deltaTime;
