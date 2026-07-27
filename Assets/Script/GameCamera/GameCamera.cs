@@ -22,6 +22,15 @@ public class GameCamera : MonoBehaviour
     // Input Systemを扱うクラス
     private PlayerInputActions input;
 
+    // シェイク時間
+    private float shakeTimer = 0.0f;
+
+    // シェイクする時間
+    private float shakeDuration = 0.0f;
+
+    // シェイクの強さ
+    private float shakeStrength = 0.0f;
+
 
     void Start()
     {
@@ -78,8 +87,25 @@ public class GameCamera : MonoBehaviour
         // 少し上に持ち上げる
         cameraMove.y += CameraY_Up;
 
-        // プレイヤーの位置に反映
-        transform.position = player.transform.position + cameraMove;
+        // シェイク用の位置
+        Vector3 shakeOffset = Vector3.zero;
+
+        // シェイク中ならランダムにずらす
+        if (shakeTimer > 0.0f)
+        {
+            shakeTimer -= Time.deltaTime;
+
+            shakeOffset = new Vector3(
+                Random.Range(-shakeStrength, shakeStrength),
+                Random.Range(-shakeStrength, shakeStrength),
+                0.0f);
+        }
+
+        // プレイヤーの位置＋シェイクを反映
+        transform.position =
+            player.transform.position +
+            cameraMove +
+            shakeOffset;
     }
 
     /// <summary>
@@ -92,5 +118,17 @@ public class GameCamera : MonoBehaviour
         {
             input.Disable();
         }
+    }
+
+    /// <summary>
+    /// カメラシェイク開始
+    /// </summary>
+    public void StartShake(float duration, float strength)
+    {
+        Debug.Log("シェイク開始");
+
+        shakeDuration = duration;
+        shakeTimer = duration;
+        shakeStrength = strength;
     }
 }
