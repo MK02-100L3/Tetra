@@ -234,12 +234,6 @@ public class PlayerMovement : MonoBehaviour
             input.Disable();
         }
     }
-    /// 攻撃処理
-    /// </summary>
-    //private void Swing()
-    //{
-    //    Debug.Log("スイング！");
-    //}
 
     public void Attack()
     {
