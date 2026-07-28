@@ -15,18 +15,23 @@ public class SceneChange : MonoBehaviour
     {
         if (Keyboard.current.enterKey.wasPressedThisFrame)
         {
-            if (SceneManager.GetActiveScene().name == "Title")
-            {
-                SceneManager.LoadScene("Game");
-            }
-            else if (SceneManager.GetActiveScene().name == "Game")
-            {
-                SceneManager.LoadScene("Result");
-            }
-            else if (SceneManager.GetActiveScene().name == "Result")
-            {
-                SceneManager.LoadScene("Title");
-            }
+            NextScene();
+        }
+    }
+
+    public void NextScene()
+    {
+        string current = SceneManager.GetActiveScene().name;
+
+       //タイトル→メイン
+       if (current == "Title")
+        {
+            SceneManager.LoadScene("Main");
+        }
+        //リザルト→タイトル
+       else if (current == "Result")
+        {
+            SceneManager.LoadScene("Title");
         }
     }
 }
