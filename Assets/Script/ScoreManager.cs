@@ -47,4 +47,32 @@ public class ScoreManager : MonoBehaviour
         // スコアを表示
         scoreText.text = "Score : " + score;
     }
+
+    /// <summary>
+    /// 現在のスコアに応じた敵の最大数を返す
+    /// </summary>
+    public int GetMaxEnemyCount()
+    {
+        if (score >= 5000)
+        {
+            return 30;
+        }
+
+        if (score >= 3000)
+        {
+            return 25;
+        }
+
+        if (score >= 1500)
+        {
+            return 20;
+        }
+
+        if (score >= 500)
+        {
+            return 15;
+        }
+
+        return 10;
+    }
 }

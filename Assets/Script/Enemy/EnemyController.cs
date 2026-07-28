@@ -252,23 +252,43 @@ public class EnemyController : MonoBehaviour
     /// <summary>
     /// スコアを加算して敵を削除する
     /// </summary>
-    private void DestroyEnemy()
+private void DestroyEnemy()
+{
+    if (currentEffect != null)
     {
-        if (currentEffect != null)
-        {
-            Destroy(currentEffect);
-        }
-
-        chainLevel = 0;
-        // ScoreManagerが存在する場合のみ加算する
-        if (scoreManager != null)
-        {
-            scoreManager.AddScore(scoreValue);
-        }
-
-        // 敵を削除
-        Destroy(gameObject);
+        Destroy(currentEffect);
     }
+
+    chainLevel = 0;
+
+    // スコア加算
+    if (scoreManager != null)
+    {
+        scoreManager.AddScore(scoreValue);
+    }
+
+    // 現在の敵数
+    int enemyCount =
+        FindObjectsByType<EnemyController>(FindObjectsSortMode.None).Length;
+
+    // 最大敵数
+    int maxEnemy = scoreManager.GetMaxEnemyCount();
+
+    // 足りないなら補充
+    if (enemyCount - 1 < maxEnemy)
+    {
+        EnemySpawner[] spawners =
+            FindObjectsByType<EnemySpawner>(FindObjectsSortMode.None);
+
+        if (spawners.Length > 0)
+        {
+            int index = Random.Range(0, spawners.Length);
+            spawners[index].SpawnEnemy();
+        }
+    }
+
+    Destroy(gameObject);
+}
 
     /// <summary>
     /// スコアを加算せずに敵を削除する
