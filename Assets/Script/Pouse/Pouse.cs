@@ -1,7 +1,9 @@
 using System.Collections;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Pouse : MonoBehaviour
@@ -9,9 +11,14 @@ public class Pouse : MonoBehaviour
     //ポーズ画像全体
     [SerializeField]
     private GameObject pauseScreen;
+
     //ポーズ画面を開いたとき、最初に選択するボタン
     [SerializeField]
     private Button firstButton;
+
+    [SerializeField]
+    private string titleSceneName = "Title";
+
     //現在ポーズ画面を開いているか。
     private bool isPaused = false;
 
@@ -49,15 +56,49 @@ public class Pouse : MonoBehaviour
                 // ポーズ画面を開いたとき
                 StartCoroutine(SelectFirstButton());
             }
-            else
-            {
-                //時を加速させる
-                Time.timeScale = 1f;
-                // ポーズ画面を閉じたとき、選択状態を解除する
-                EventSystem.current.SetSelectedGameObject(null);
-            }
+            //else
+            //{
+            //    //時を加速させる
+            //    Time.timeScale = 1f;
+            //    // ポーズ画面を閉じたとき、選択状態を解除する
+            //   // EventSystem.current.SetSelectedGameObject(null);
+            //}
+        }
+
+        //ポーズ画面が開いている間、Enterキーで
+        //「今光っている（選択されている）ボタン」を実行する
+        if (isPaused && Keyboard.current != null &&
+            Keyboard.current.enterKey.wasPressedThisFrame)
+        {
+            ReturnToTitle();
+        }
+
+        else
+        {
+
         }
     }
+
+    //private void PressSelectedButton()
+    //{
+    //    if (EventSystem.current == null)
+    //    {
+    //        return;
+    //    }
+
+    //    GameObject selected = EventSystem.current.currentSelectedGameObject;
+    //    if (selected = null)
+    //    {
+    //        return;
+    //    }
+
+    //    Button selectedButton = selected.GetComponent<Button>();
+    //    if (selectedButton != null)
+    //    {
+    //        //ボタンのOnClick()に登録されている処理をそのまま実行する
+    //        selectedButton.onClick.Invoke();
+    //    }
+    //}
 
     private IEnumerator SelectFirstButton()
     {
@@ -81,5 +122,26 @@ public class Pouse : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(null);
         // 最初のボタンを選択状態にする
         firstButton.Select();
+    }
+
+    public void ResumeGame()
+    {
+        isPaused = false;
+        Time.timeScale = 1f;
+        pauseScreen.SetActive(false);
+
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
+    }
+
+    public void ReturnToTitle()
+    {
+        //ポーズ状態を解除してからタイトルシーンへ
+        Time.timeScale = 1f;
+        isPaused = false;
+
+        SceneManager.LoadScene(titleSceneName);
     }
 }
