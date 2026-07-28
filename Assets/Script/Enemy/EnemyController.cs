@@ -29,10 +29,6 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private float moveSpeed = 3.0f;
 
-    // 飛ぶ速度
-    [SerializeField]
-    private float flySpeed = 15f;
-
     // 消えるまでの時間
     [SerializeField]
     private float lifeTime = 2.0f;
