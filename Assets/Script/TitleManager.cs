@@ -20,11 +20,11 @@ public class TitleManager : MonoBehaviour
 
     void Update()
     {
-        // SpaceキーやAボタンなど、Submit入力でゲーム開始
-        if (input.Player.Swing.WasPressedThisFrame())
-        {
-            SceneManager.LoadScene("Main");
-        }
+        //SpaceキーやAボタンなど、Submit入力でゲーム開始
+        //if (input.Player.Swing.WasPressedThisFrame())
+        //{
+        //    SceneManager.LoadScene("Main");
+        //}
 
         // スペースキーが押された瞬間
         if (Keyboard.current.spaceKey.wasPressedThisFrame)

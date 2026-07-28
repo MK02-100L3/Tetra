@@ -16,6 +16,8 @@ public class EnemyController : MonoBehaviour
     // 消えるまでの時間
     private float lifeTimer;
 
+    // あと何回連鎖できるか
+    private int chainLevel = 0;
 
     // プレイヤー
     private Transform player;
@@ -45,12 +47,24 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private AudioClip chainHitSE;   // 敵同士がぶつかった音
 
+    [SerializeField]
+    private float normalFlySpeed = 15f;
+
+    [SerializeField]
+    private float maxFlySpeed = 25f;
+
+    [SerializeField]
+    private float normalRotateSpeed = 900f;
+
+    [SerializeField]
+    private float maxRotateSpeed = 1800f;
+
+    private float currentFlySpeed;
+    private float currentRotateSpeed;
+
     //[SerializeField]
     //private AudioClip destroySE;    // 消滅音（後でもOK）
 
-    // 飛んでいるときの回転速度（度/秒）
-    [SerializeField]
-    private float rotateSpeed = 900.0f;
 
     void Start()
     {
@@ -86,13 +100,13 @@ public class EnemyController : MonoBehaviour
         }
 
         // 一直線に飛ぶ
-        transform.position += flyDirection * flySpeed * Time.deltaTime;
+        transform.position += flyDirection * currentFlySpeed * Time.deltaTime;
 
         // 飛んでいる間は転がるように回転する
         transform.Rotate(
-            rotateSpeed * Time.deltaTime,
+            currentRotateSpeed * Time.deltaTime,
             0.0f,
-            rotateSpeed * Time.deltaTime);
+            currentRotateSpeed * Time.deltaTime);
 
         // タイマー
         lifeTimer -= Time.deltaTime;
@@ -105,26 +119,52 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    // プレイヤーから吹っ飛ばされる
-    public void KnockBack(Vector3 attackPosition)
+    /// <summary>
+    /// 敵を吹っ飛ばす
+    /// </summary>
+    /// <param name="attackPosition">攻撃した位置</param>
+    /// <param name="chainLevel">あと何回連鎖できるか</param>
+    public void KnockBack(Vector3 attackPosition, int chainLevel, bool isMaxCharge)
     {
-
+        // すでに飛んでいたら何もしない
         if (isFlying)
             return;
 
-        // 飛ぶ方向を計算する
+        // この敵の連鎖回数を保存
+        this.chainLevel = chainLevel;
+
+        if (isMaxCharge)
+        {
+            currentFlySpeed = maxFlySpeed;
+            currentRotateSpeed = maxRotateSpeed;
+        }
+        else
+        {
+            currentFlySpeed = normalFlySpeed;
+            currentRotateSpeed = normalRotateSpeed;
+        }
+
+        // 飛ぶ方向を計算
         flyDirection = (transform.position - attackPosition).normalized;
-        // 少し上方向にも飛ばす
-        flyDirection.y = 0.3f;
-        // ベクトルの長さを1にそろえる
+        flyDirection.y = 0;
         flyDirection.Normalize();
 
+        // 飛行開始
         isFlying = true;
         lifeTimer = lifeTime;
     }
-
     private void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("Player"))
+        {
+            PlayerMovement player = other.GetComponent<PlayerMovement>();
+
+            if (player != null)
+            {
+                player.Damage(transform.position);
+            }
+        }
+
         if (!isFlying)
             return;
 
@@ -132,14 +172,19 @@ public class EnemyController : MonoBehaviour
 
         if (enemy != null && !enemy.IsFlying)
         {
-            // 敵同士がぶつかった音を再生
-            audioSource.PlayOneShot(chainHitSE);
-
-            // 自分を一瞬停止させる
-            StartCoroutine(HitPause());
-
             // 相手を吹っ飛ばす
-            enemy.KnockBack(transform.position);
+            // まだ連鎖できるなら
+            if (chainLevel > 0)
+            {
+                // 効果音
+                audioSource.PlayOneShot(chainHitSE);
+
+                // 一瞬停止
+                StartCoroutine(HitPause());
+
+                // 相手へ残り回数を渡す
+                enemy.KnockBack(transform.position, chainLevel - 1, currentFlySpeed == maxFlySpeed);
+            }
         }
 
         // 壁に当たったら撃破
@@ -164,6 +209,12 @@ public class EnemyController : MonoBehaviour
         // 地面に沿って移動するためY方向を無視
         direction.y = 0;
 
+        // プレイヤーの方を向く
+        if (direction != Vector3.zero)
+        {
+            transform.forward = direction.normalized;
+        }
+
         // プレイヤーへ向かって移動
         transform.position += direction * moveSpeed * Time.deltaTime;
     }
@@ -173,6 +224,7 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     private void DestroyEnemy()
     {
+        chainLevel = 0;
         // ScoreManagerが存在する場合のみ加算する
         if (scoreManager != null)
         {
@@ -206,5 +258,6 @@ public class EnemyController : MonoBehaviour
         // 飛行を再開する
         isPaused = false;
     }
+
 }
 

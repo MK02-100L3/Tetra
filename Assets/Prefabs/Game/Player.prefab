@@ -3130,6 +3130,11 @@ MonoBehaviour:
   swingSE: {fileID: 8300000, guid: 04c528cada12e8c42a991a439b3949f4, type: 3}
   hitSE: {fileID: 8300000, guid: 73773c96ad6734f43be388b15e6a7294, type: 3}
   hitEffect: {fileID: 4021103657954561961, guid: 5c755f9bc5253ea418e919994537dcc7, type: 3}
+  maxChargeEffect: {fileID: 7177991128484655659, guid: 59a35ab9f68edff40b6e5332bed330f5, type: 3}
+  maxChargeTime: 1
+  knockBackPower: 80
+  knockBackTime: 0.2
+  invincibleTime: 1
 --- !u!95 &3610340259619080033
 Animator:
   serializedVersion: 7
