@@ -57,13 +57,21 @@ public class EnemyController : MonoBehaviour
     private float normalRotateSpeed = 900f;
 
     [SerializeField]
-    private float maxRotateSpeed = 1800f;
+    private float maxRotateSpeed = 2500f;
 
     private float currentFlySpeed;
     private float currentRotateSpeed;
 
     //[SerializeField]
     //private AudioClip destroySE;    // 消滅音（後でもOK）
+
+    [SerializeField]
+    private GameObject flyingEffect;
+
+    private GameObject currentEffect;
+
+    [SerializeField]
+    private GameObject collisionEffect;
 
 
     void Start()
@@ -112,10 +120,16 @@ public class EnemyController : MonoBehaviour
         lifeTimer -= Time.deltaTime;
 
         // 飛んでいる時間が終わったら撃破
-        if (lifeTimer <= 0)
+        if (lifeTimer <= 0 || chainLevel == 0)
         {
             DestroyEnemy();
 
+        }
+
+        // エフェクトの位置だけ敵に追従させる
+        if (currentEffect != null)
+        {
+            currentEffect.transform.position = transform.position;
         }
     }
 
@@ -152,6 +166,15 @@ public class EnemyController : MonoBehaviour
         // 飛行開始
         isFlying = true;
         lifeTimer = lifeTime;
+
+        // 飛行エフェクト生成
+        if (flyingEffect != null && currentEffect == null)
+        {
+            currentEffect = Instantiate(
+                flyingEffect,
+                transform.position,
+                Quaternion.identity);
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -178,6 +201,17 @@ public class EnemyController : MonoBehaviour
             {
                 // 効果音
                 audioSource.PlayOneShot(chainHitSE);
+
+                // 衝突エフェクト
+                if (collisionEffect != null)
+                {
+                    Vector3 hitPos = (transform.position + enemy.transform.position) * 0.5f;
+
+                    Instantiate(
+                        collisionEffect,
+                        hitPos + Vector3.up * 0.5f,
+                        Quaternion.identity);
+                }
 
                 // 一瞬停止
                 StartCoroutine(HitPause());
@@ -224,6 +258,11 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     private void DestroyEnemy()
     {
+        if (currentEffect != null)
+        {
+            Destroy(currentEffect);
+        }
+
         chainLevel = 0;
         // ScoreManagerが存在する場合のみ加算する
         if (scoreManager != null)

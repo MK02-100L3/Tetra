@@ -298,6 +298,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: robotSphere
       objectReference: {fileID: 0}
+    - target: {fileID: 8027604042102850564, guid: bc73bffd449625442bb21b63f5e5586f, type: 3}
+      propertyPath: flyingEffect
+      value: 
+      objectReference: {fileID: 763799897560185588, guid: 798157bad7358b04499c9d71cd3c0d9b, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
