@@ -83,6 +83,9 @@ public class PlayerMovement : MonoBehaviour
     // 最大チャージ時の最大連鎖回数
     private const int MaxChainLevel = 999;
 
+    // プレイヤーの高さを固定する
+    private float fixedY;
+
     void Start()
     {
         // Playerに付いているAnimatorを取得
@@ -99,6 +102,9 @@ public class PlayerMovement : MonoBehaviour
         // Input Systemを有効化する
         // Enable()しないと入力を受け取れない
         input.Enable();
+
+        // 現在の高さを保存
+        fixedY = transform.position.y;
     }
 
     void Update()
@@ -106,6 +112,9 @@ public class PlayerMovement : MonoBehaviour
         if (isKnockBack)
         {
             controller.Move(knockBackVelocity * Time.deltaTime);
+
+            FixHeight();
+
             return;
         }
 
@@ -220,6 +229,8 @@ public class PlayerMovement : MonoBehaviour
         {
             transform.forward = moveDirection.normalized;
         }
+
+        FixHeight();
     }
 
     /// <summary>
@@ -422,5 +433,11 @@ public class PlayerMovement : MonoBehaviour
         {
             renderers[i].enabled = originalState[i];
         }
+    }
+    private void FixHeight()
+    {
+        Vector3 pos = transform.position;
+        pos.y = fixedY;
+        transform.position = pos;
     }
 }
