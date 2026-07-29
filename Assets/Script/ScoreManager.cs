@@ -45,7 +45,7 @@ public class ScoreManager : MonoBehaviour
             return;
 
         // スコアを表示
-        scoreText.text = "Score : " + score;
+        scoreText.text = score.ToString();
     }
 
     /// <summary>
