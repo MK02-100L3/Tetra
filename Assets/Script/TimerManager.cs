@@ -66,7 +66,7 @@ public class TimerManager : MonoBehaviour
         if (timerText == null)
             return;
 
-        timerText.text = "Time : " + Mathf.CeilToInt(currentTime);
+        timerText.text = Mathf.CeilToInt(currentTime).ToString();
     }
 
     /// <summary>
