@@ -253,7 +253,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -50, y: 50}
+  m_AnchoredPosition: {x: 120, y: 50}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &711798526
@@ -398,6 +398,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 959582488202425858, guid: 24bb6d96b6cff6c4280a406d37ff5031, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 25.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 959582488202425858, guid: 24bb6d96b6cff6c4280a406d37ff5031, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 5269822842581159170, guid: 24bb6d96b6cff6c4280a406d37ff5031, type: 3}
       propertyPath: m_Name
       value: Canvas
