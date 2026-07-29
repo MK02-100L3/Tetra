@@ -15,15 +15,8 @@ public class ResultManager : MonoBehaviour
     void Start()
     {
         // 保存していたスコアを表示
-        scoreText.text = "Score : " + GameData.Score;
+        scoreText.text = GameData.Score.ToString();
     }
 
-    void Update()
-    {
-        // スペースキーが押されたらタイトル画面へ戻る
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            SceneManager.LoadScene("Title");
-        }
-    }
+
 }
