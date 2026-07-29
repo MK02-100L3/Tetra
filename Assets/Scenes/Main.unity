@@ -2084,6 +2084,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5042909309627190105, guid: 5ea0395e0eef1084c8dceee741f4e418, type: 3}
+      propertyPath: maxChargeSE
+      value: 
+      objectReference: {fileID: 8300000, guid: 52af44252c7bf3047b856fb08d79d70d, type: 3}
+    - target: {fileID: 5042909309627190105, guid: 5ea0395e0eef1084c8dceee741f4e418, type: 3}
       propertyPath: maxChargeTime
       value: 0.85
       objectReference: {fileID: 0}
