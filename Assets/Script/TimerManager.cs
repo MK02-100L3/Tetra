@@ -97,7 +97,7 @@ public class TimerManager : MonoBehaviour
 
         Debug.Log("2秒待機開始");
         // 2秒待つ
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2f);
 
         Debug.Log("Resultへ移動します");
         // Resultシーンへ移動
