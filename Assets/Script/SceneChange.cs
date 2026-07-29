@@ -13,7 +13,15 @@ public class SceneChange : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Keyboard.current.enterKey.wasPressedThisFrame)
+        bool enter =
+            Keyboard.current != null &&
+            Keyboard.current.enterKey.wasPressedThisFrame;
+
+        bool pad =
+            Gamepad.current != null &&
+            Gamepad.current.buttonSouth.wasPressedThisFrame;
+
+        if (enter || pad)
         {
             NextScene();
         }
