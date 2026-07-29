@@ -4,6 +4,7 @@ using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private ScoreManager scoreManager;
     // Input Actionsを扱うクラス
     // Move、Look、Swingなどの入力を取得するために使う
     private PlayerInputActions input;
@@ -93,6 +94,8 @@ public class PlayerMovement : MonoBehaviour
         // PlayerInputActionsクラスを生成する
         // これでInputActionsで設定したMoveやLookなどを使えるようになる
         input = new PlayerInputActions();
+
+        scoreManager = FindFirstObjectByType<ScoreManager>();
 
         audioSource = GetComponent<AudioSource>();
 
@@ -282,6 +285,12 @@ public class PlayerMovement : MonoBehaviour
                 {
                     enemy.KnockBack(transform.position,chainLevel,isMaxCharge);
 
+                    // 最大チャージならボーナス
+                    if (isMaxCharge && scoreManager != null)
+                    {
+                        scoreManager.AddScore(300);
+                    }
+
                     GameCamera cameraShake = cameraTransform.GetComponent<GameCamera>();
 
                     if (cameraShake != null)
@@ -363,6 +372,11 @@ public class PlayerMovement : MonoBehaviour
         isInvincible = true;
         isKnockBack = true;
         maxChargeEffectPlayed = false;
+
+        if (scoreManager != null)
+        {
+            scoreManager.AddScore(-300);
+        }
 
         // チャージ解除
         isCharging = false;

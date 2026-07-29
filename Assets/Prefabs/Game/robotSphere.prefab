@@ -2685,9 +2685,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   moveSpeed: 7
-  flySpeed: 15
   lifeTime: 2
-  scoreValue: 100
+  scoreValue: 300
   chainHitSE: {fileID: 8300000, guid: 1f4584df43ccef940a426367e0b14266, type: 3}
   normalFlySpeed: 15
   maxFlySpeed: 25
