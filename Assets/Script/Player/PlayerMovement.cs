@@ -44,6 +44,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private GameObject maxChargeEffect;
 
+    [SerializeField]
+    private AudioClip maxChargeSE;
+
     // 最大チャージ演出を出したか
     private bool maxChargeEffectPlayed = false;
 
@@ -148,6 +151,9 @@ public class PlayerMovement : MonoBehaviour
             if (chargeTime >= maxChargeTime && !maxChargeEffectPlayed)
             {
                 maxChargeEffectPlayed = true;
+
+                // 最大チャージ音
+                audioSource.PlayOneShot(maxChargeSE);
 
                 Instantiate(
                     maxChargeEffect,
