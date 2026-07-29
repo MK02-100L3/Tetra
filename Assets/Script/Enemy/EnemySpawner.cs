@@ -1,52 +1,40 @@
 using UnityEngine;
+using System.Collections;
 
-/// <summary>
-/// 敵を一定時間ごとにスポーンするクラス
-/// </summary>
 public class EnemySpawner : MonoBehaviour
 {
-    // 生成する敵Prefab
     [SerializeField]
     private GameObject enemyPrefab;
 
-    // 生成間隔
-    [SerializeField]
-    private float spawnInterval = 1f;
-
-    // タイマー
-    private float timer;
-
-    // タイマー管理クラス
-    private TimerManager timerManager;
-
     void Start()
     {
-        // Scene内のTimerManagerを取得
-        timerManager = FindFirstObjectByType<TimerManager>();
-    }
-
-    void Update()
-    {
-        // タイムアップしたら敵を生成しない
-        if (timerManager != null && timerManager.IsTimeUp)
-            return;
-
-        // 時間を加算
-        timer += Time.deltaTime;
-
-        // 一定時間経過したら敵を生成
-        if (timer >= spawnInterval)
+        for (int i = 0; i < 10; i++)
         {
-            SpawnEnemy();
-            timer = 0f;
+            EnemySpawner[] spawners =
+                FindObjectsByType<EnemySpawner>(FindObjectsSortMode.None);
+
+            int index = Random.Range(0, spawners.Length);
+
+            spawners[index].SpawnEnemy();
         }
     }
 
-    /// <summary>
-    /// 敵を生成する
-    /// </summary>
-    private void SpawnEnemy()
+    // 今まで通り即スポーン
+    public void SpawnEnemy()
     {
+        Instantiate(enemyPrefab, transform.position, Quaternion.identity);
+    }
+
+    // 遅れてスポーン
+    public void SpawnEnemy(float delay)
+    {
+        StartCoroutine(SpawnDelay(delay));
+    }
+
+    private IEnumerator SpawnDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
         Instantiate(enemyPrefab, transform.position, Quaternion.identity);
     }
 }
