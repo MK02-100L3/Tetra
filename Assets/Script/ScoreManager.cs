@@ -53,22 +53,32 @@ public class ScoreManager : MonoBehaviour
     /// </summary>
     public int GetMaxEnemyCount()
     {
-        if (score >= 5000)
+        if (score >= 60000)
+        {
+            return 60;
+        }
+
+        if (score >= 50000)
+        {
+            return 50;
+        }
+
+        if (score >= 40000)
+        {
+            return 40;
+        }
+
+        if (score >= 20000)
         {
             return 30;
         }
 
-        if (score >= 3000)
-        {
-            return 25;
-        }
-
-        if (score >= 1500)
+        if (score >= 10000)
         {
             return 20;
         }
 
-        if (score >= 500)
+        if (score >= 3000)
         {
             return 15;
         }

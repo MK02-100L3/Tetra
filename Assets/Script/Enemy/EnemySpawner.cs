@@ -1,40 +1,75 @@
 using UnityEngine;
-using System.Collections;
 
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField]
     private GameObject enemyPrefab;
 
+    [SerializeField]
+    private float spawnInterval = 1.0f;
+
+    [SerializeField]
+    private bool isManager = false;
+
+    private float timer;
+
+    private ScoreManager scoreManager;
+
     void Start()
     {
-        for (int i = 0; i < 10; i++)
+        scoreManager = FindFirstObjectByType<ScoreManager>();
+    }
+
+    void Update()
+    {
+        if (!isManager)
+            return;
+
+        timer += Time.deltaTime;
+
+        if (timer < spawnInterval)
+            return;
+
+        timer = 0;
+
+        if (scoreManager.Score >= 60000)
+        {
+            spawnInterval = 0.1f;
+        }
+        else if (scoreManager.Score >= 30000)
+        {
+            spawnInterval = 0.2f;
+        }
+        else if (scoreManager.Score >= 25000)
+        {
+            spawnInterval = 0.4f;
+        }
+        else if (scoreManager.Score >= 10000)
+        {
+            spawnInterval = 0.6f;
+        }
+        else
+        {
+            spawnInterval = 0.8f;
+        }
+
+        int enemyCount =
+            FindObjectsByType<EnemyController>(FindObjectsSortMode.None).Length;
+
+        int maxEnemy = scoreManager.GetMaxEnemyCount();
+
+        if (enemyCount < maxEnemy)
         {
             EnemySpawner[] spawners =
                 FindObjectsByType<EnemySpawner>(FindObjectsSortMode.None);
 
             int index = Random.Range(0, spawners.Length);
-
             spawners[index].SpawnEnemy();
         }
     }
 
-    // 今まで通り即スポーン
     public void SpawnEnemy()
     {
-        Instantiate(enemyPrefab, transform.position, Quaternion.identity);
-    }
-
-    // 遅れてスポーン
-    public void SpawnEnemy(float delay)
-    {
-        StartCoroutine(SpawnDelay(delay));
-    }
-
-    private IEnumerator SpawnDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        Instantiate(enemyPrefab, transform.position, Quaternion.identity);
+        Instantiate(enemyPrefab, transform.position, transform.rotation);
     }
 }
