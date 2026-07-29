@@ -58,8 +58,8 @@ public class EnemyController : MonoBehaviour
     private float currentFlySpeed;
     private float currentRotateSpeed;
 
-    //[SerializeField]
-    //private AudioClip destroySE;    // 消滅音（後でもOK）
+    [SerializeField]
+    private AudioClip destroySE;    // 消滅音（後でもOK）
 
     [SerializeField]
     private GameObject flyingEffect;
@@ -69,6 +69,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private GameObject collisionEffect;
 
+    [SerializeField]
+    private GameObject destroyEffect;
 
     void Start()
     {
@@ -254,12 +256,32 @@ public class EnemyController : MonoBehaviour
     /// </summary>
 private void DestroyEnemy()
 {
-    if (currentEffect != null)
-    {
-        Destroy(currentEffect);
-    }
+        // 飛行エフェクト削除
+        if (currentEffect != null)
+        {
+            Destroy(currentEffect);
+        }
 
-    chainLevel = 0;
+        // 消滅エフェクト生成
+        if (destroyEffect != null)
+        {
+            Instantiate(
+                destroyEffect,
+                transform.position,
+                Quaternion.identity);
+        }
+
+        // 消滅音
+        if (destroySE != null)
+        {
+            AudioSource.PlayClipAtPoint(
+                destroySE,
+                Camera.main.transform.position,
+                2.0f);
+        }
+
+
+        chainLevel = 0;
 
     // スコア加算
     if (scoreManager != null)
