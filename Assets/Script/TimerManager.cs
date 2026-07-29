@@ -16,17 +16,24 @@ public class TimerManager : MonoBehaviour
     [SerializeField]
     private TMP_Text timerText;
 
+    [SerializeField]
+    private GameObject timeUpText;
+
     // 現在時間
     private float currentTime;
 
     // スコア管理
     private ScoreManager scoreManager;
 
+    private PlayerMovement playerMovement;
+
     // タイムアップしたか
     public bool IsTimeUp { get; private set; }
 
     void Start()
     {
+        playerMovement = FindFirstObjectByType<PlayerMovement>();
+
         currentTime = timeLimit;
         UpdateTimerText();
 
@@ -48,6 +55,11 @@ public class TimerManager : MonoBehaviour
         {
             currentTime = 0;
             IsTimeUp = true;
+
+            if (timeUpText != null)
+            {
+                StartCoroutine(BlinkTimeUp());
+            }
 
             Debug.Log("TIME UP!");
 
@@ -77,12 +89,27 @@ public class TimerManager : MonoBehaviour
         // 最終スコアを保存
         GameData.Score = scoreManager.Score;
 
+        //プレイヤーを停止
+        if (playerMovement != null)
+        {
+            playerMovement.enabled = false;
+        }
+
         Debug.Log("2秒待機開始");
         // 2秒待つ
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
 
         Debug.Log("Resultへ移動します");
         // Resultシーンへ移動
         SceneManager.LoadScene("Result");
+    }
+
+    private IEnumerator BlinkTimeUp()
+    {
+        while (true)
+        {
+            timeUpText.SetActive(!timeUpText.activeSelf);
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 }
